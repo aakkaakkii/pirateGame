@@ -1,7 +1,8 @@
 package org.example.components;
 
 import org.example.engine.Window;
-import org.example.utils.Vector2;
+import org.example.physics2d.common.Vector2;
+import org.example.physics2d.rigidbody.Rigidbody2D;
 
 import java.awt.event.KeyEvent;
 
@@ -13,10 +14,12 @@ public class PlayerController extends Component {
     private Vector2 velocity = new Vector2();
     public float slowDownForce = 0.05f;
     private transient Vector2 acceleration = new Vector2();
+    private transient Rigidbody2D rb;
 
     @Override
     public void start() {
         this.stateMachine = gameObject.getComponent(StateMachine.class);
+        this.rb = gameObject.getComponent(Rigidbody2D.class);
     }
 
     @Override
@@ -95,10 +98,12 @@ public class PlayerController extends Component {
         }
 
 
-        this.velocity.x += this.acceleration.x * dt;
-        this.velocity.y += this.acceleration.y * dt;
-        gameObject.transform.position.x += this.velocity.x;
-        gameObject.transform.position.y += this.velocity.y;
+//        this.velocity.x += this.acceleration.x * dt;
+//        this.velocity.y += this.acceleration.y * dt;
+        this.rb.addForce(new Vector2(acceleration).mul(10000));
+
+//        gameObject.transform.position.x += this.velocity.x;
+//        gameObject.transform.position.y += this.velocity.y;
 
     }
 }

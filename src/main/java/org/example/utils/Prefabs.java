@@ -5,6 +5,7 @@ import org.example.engine.AnimationState;
 import org.example.engine.AssetPool;
 import org.example.engine.GameObject;
 import org.example.engine.Transform;
+import org.example.physics2d.common.Vector2;
 
 public class Prefabs {
 

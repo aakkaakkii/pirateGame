@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameObject {
-    private List<org.example.components.Component> components;
+    private List<Component> components;
     private String name;
     public Transform transform;
     private boolean serializable = true;
