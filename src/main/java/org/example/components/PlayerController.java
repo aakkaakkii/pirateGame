@@ -29,10 +29,6 @@ public class PlayerController extends Component {
         }
 
         if (Window.getWindow().keyListener.isKeyPressed(KeyEvent.VK_D)) {
-            if (this.gameObject.transform.scale.x < 0) {
-                gameObject.transform.position.x = gameObject.transform.position.x
-                        - (stateMachine.getCurrentState().getCurrentSprite().width * playerWidth);
-            }
             this.gameObject.transform.scale.x = playerWidth;
             this.acceleration.x = walkSpeed;
 
@@ -44,10 +40,6 @@ public class PlayerController extends Component {
             }
 
         } else if (Window.getWindow().keyListener.isKeyPressed(KeyEvent.VK_A)) {
-            if (this.gameObject.transform.scale.x > 0) {
-                gameObject.transform.position.x = gameObject.transform.position.x
-                        + (stateMachine.getCurrentState().getCurrentSprite().width * playerWidth);
-            }
             this.gameObject.transform.scale.x = -playerWidth;
             this.acceleration.x = -walkSpeed;
 
@@ -98,12 +90,12 @@ public class PlayerController extends Component {
         }
 
 
-//        this.velocity.x += this.acceleration.x * dt;
-//        this.velocity.y += this.acceleration.y * dt;
-        this.rb.addForce(new Vector2(acceleration).mul(10000));
+        this.velocity.x += this.acceleration.x * dt;
+        this.velocity.y += this.acceleration.y * dt;
+//        this.rb.addForce(new Vector2(acceleration).mul(10000));
 
-//        gameObject.transform.position.x += this.velocity.x;
-//        gameObject.transform.position.y += this.velocity.y;
+        gameObject.transform.position.x += this.velocity.x;
+        gameObject.transform.position.y += this.velocity.y;
 
     }
 }

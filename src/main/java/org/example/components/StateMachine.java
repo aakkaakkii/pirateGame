@@ -1,5 +1,6 @@
 package org.example.components;
 
+import org.example.components.draw.SpriteRenderer;
 import org.example.engine.AnimationState;
 
 import java.util.ArrayList;

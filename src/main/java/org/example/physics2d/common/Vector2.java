@@ -36,9 +36,15 @@ public class Vector2 {
         return this;
     }
 
-    public Vector2 mul(float scale) {
-        this.x = x * scale;
-        this.y = y * scale;
+    public Vector2 mul(float v) {
+        this.x = x * v;
+        this.y = y * v;
+        return this;
+    }
+
+    public Vector2 mul(float x, float y) {
+        this.x = this.x * x;
+        this.y = this.y * y;
         return this;
     }
 
@@ -84,4 +90,21 @@ public class Vector2 {
         this.y = 0;
         return this;
     }
+
+    public Vector2 mulPosition(Matrix3 mat) {
+        float rx = this.x * mat.m00 + this.y * mat.m01 + mat.m02;
+        float ry = this.x * mat.m10 + this.y * mat.m11 + mat.m12;
+        this.x = rx;
+        this.y = ry;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Vector2{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
+
 }

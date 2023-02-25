@@ -1,8 +1,9 @@
 package org.example.scenes;
 
-import org.example.components.*;
-import org.example.engine.*;
-import org.example.engine.Window;
+import org.example.components.Spritesheet;
+import org.example.engine.AssetPool;
+import org.example.engine.GameObject;
+import org.example.engine.Scene;
 import org.example.physics2d.PhysicsSystem2D;
 import org.example.physics2d.common.Vector2;
 import org.example.physics2d.rigidbody.Rigidbody2D;
@@ -20,7 +21,6 @@ public class TestScene extends Scene {
     private float scaleW = 4f;
 
     private int[][] levelData;
-    PhysicsSystem2D physicsSystem2D;
 
     public TestScene() {
         super("Test");
@@ -39,12 +39,10 @@ public class TestScene extends Scene {
 
         gameObject = Prefabs.generatePlayer();
 
-        physicsSystem2D = new PhysicsSystem2D(1.0f / 60.f, new Vector2(0, 1));
         Rigidbody2D rb = new Rigidbody2D();
         rb.setMass(200.0f);
         gameObject.addComponent(rb);
 
-        physicsSystem2D.addRigidbody(rb);
 
 
         addGameObject(gameObject);
@@ -73,7 +71,6 @@ public class TestScene extends Scene {
         for (GameObject g : gameObjects) {
             g.update(dt);
         }
-        physicsSystem2D.update(dt);
 
     }
 

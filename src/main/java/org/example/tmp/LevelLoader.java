@@ -38,8 +38,8 @@ public class LevelLoader {
 
 
                 GameObject go = Prefabs.generateSpriteObject(spr.sprites.get(value), Window.SCALE, Window.SCALE, "Block");
-                go.transform.position.x = i * size * Window.SCALE;
-                go.transform.position.y = j * size * Window.SCALE;
+                go.transform.position.x = i * size * Window.SCALE + size * Window.SCALE/2;
+                go.transform.position.y = j * size * Window.SCALE + size * Window.SCALE/2;
                 scene.addGameObject(go);
 
 /*                g2.drawImage(spritesheet.sprites.get(levelData[i][j]).image,

@@ -1,6 +1,7 @@
 package org.example.engine;
 
 import org.example.components.Component;
+import org.example.components.draw.Drawer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,9 @@ public class GameObject {
     private List<Component> components;
     private String name;
     public Transform transform;
-    private boolean serializable = true;
     public int zIndex;
+    private Drawer drawer;
+    private boolean isDebugEnabled = false;
 
     public GameObject(String name, Transform transform, int zIndex) {
         this.name = name;
@@ -19,8 +21,8 @@ public class GameObject {
         this.zIndex = zIndex;
     }
 
-    public <T extends org.example.components.Component> T getComponent(Class<T> componentClass) {
-        for (org.example.components.Component c : components) {
+    public <T extends Component> T getComponent(Class<T> componentClass) {
+        for (Component c : components) {
             if(componentClass.isAssignableFrom(c.getClass())) {
                 try {
                     return componentClass.cast(c);
@@ -34,16 +36,26 @@ public class GameObject {
         return null;
     }
 
-    public List<org.example.components.Component> getAllComponents() {
+    public List<Drawer> getDrawers() {
+        List<Drawer> drawers = new ArrayList<>();
+        for (Component c : components) {
+            if(Drawer.class.isAssignableFrom(c.getClass())) {
+                drawers.add((Drawer) c);
+            }
+        }
+        return drawers;
+    }
+
+    public List<Component> getAllComponents() {
         return components;
     }
 
-    public void addComponent(org.example.components.Component c) {
+    public void addComponent(Component c) {
         components.add(c);
         c.gameObject = this;
     }
 
-    public <T extends org.example.components.Component> void removeComponent(Class<T> componentClass) {
+    public <T extends Component> void removeComponent(Class<T> componentClass) {
         components.removeIf(c -> componentClass.isAssignableFrom(c.getClass()));
     }
 
@@ -53,8 +65,27 @@ public class GameObject {
         }
     }
 
+    public void setDrawer(Drawer drawer) {
+        this.drawer = drawer;
+    }
 
-/*    public GameObject copy() {
+    public Drawer getDrawer() {
+        return drawer;
+    }
+
+    public void setDebugEnabled(boolean debugEnabled) {
+        isDebugEnabled = debugEnabled;
+    }
+
+    public boolean isDebugEnabled() {
+        return isDebugEnabled;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /*    public GameObject copy() {
         GameObject newGameObject = new GameObject("Generated", transform.copy(), this.zIndex);
         for (Component c : components) {
             Component copy = c.copy();

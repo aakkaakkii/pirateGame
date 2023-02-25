@@ -1,6 +1,6 @@
 package org.example.engine;
 
-import org.example.components.SpriteRenderer;
+import org.example.components.draw.Drawer;
 import org.example.physics2d.common.Vector2;
 
 import java.awt.*;
@@ -46,22 +46,20 @@ public class Renderer {
                         g.transform.position.y - camera.position.y);
 
 
-                SpriteRenderer spr = g.getComponent(SpriteRenderer.class);
-                spr.draw(g2);
+                if (g.isDebugEnabled()) {
+                    List<Drawer> drawers = g.getDrawers();
+                    for (Drawer drawer : drawers) {
+                        drawer.draw(g2);
+                    }
+                } else {
+                    Drawer drawer = g.getComponent(Drawer.class);
+                    if (drawer != null) {
+                        drawer.draw(g2);
+                    }
+                }
 
 
-  /*              g.transform.position.x = oldTransform.position.x;
-                g.transform.position.y = oldTransform.position.y;
-                g.transform.scale.x = oldTransform.scale.x;
-                g.transform.scale.y = oldTransform.scale.y;
-                g.transform.rotation = oldTransform.rotation;*/
-
-
-             g.transform = oldTransform;
-
-  /*           g.transform.position.set(oldTransform.position);
-             g.transform.rotation = oldTransform.rotation;
-             g.transform.scale.set(oldTransform.scale);*/
+                g.transform = oldTransform;
             }
             currentZIndex++;
         }

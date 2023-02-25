@@ -1,5 +1,6 @@
 package org.example.engine;
 
+import org.example.scenes.PhysicsScene;
 import org.example.scenes.TestScene;
 import org.example.utils.Constants;
 import org.example.utils.Time;
@@ -42,7 +43,7 @@ public class Window extends JFrame implements Runnable {
     }
 
     public void init() {
-        changeScene(0);
+        changeScene(1);
         currentScene.init();
     }
 
@@ -50,6 +51,8 @@ public class Window extends JFrame implements Runnable {
         switch (scene) {
             case 0:
                 this.currentScene = new TestScene();
+            case 1:
+                this.currentScene = new PhysicsScene();
         }
     }
 

@@ -1,6 +1,7 @@
 package org.example.utils;
 
 import org.example.components.*;
+import org.example.components.draw.SpriteRenderer;
 import org.example.engine.AnimationState;
 import org.example.engine.AssetPool;
 import org.example.engine.GameObject;
@@ -30,12 +31,12 @@ public class Prefabs {
     public static GameObject generatePlayer() {
         Spritesheet spritesheet = AssetPool.getSpritesheet("assets/player_sprites.png");
         GameObject player = generateSpriteObject(spritesheet.sprites.get(0), 4, 4, "player", 1);
-        player.transform.position.x = 100f;
-        player.transform.position.y = 200f;
+        player.transform.position.x = 300f;
+        player.transform.position.y = 300f;
 
         AnimationState idle = new AnimationState();
         idle.title = "idle";
-        float defaultFrameTime = 0.1f;
+        float defaultFrameTime = 0.2f;
         idle.addFrame(spritesheet.sprites.get(0), defaultFrameTime);
         idle.addFrame(spritesheet.sprites.get(1), defaultFrameTime);
         idle.addFrame(spritesheet.sprites.get(2), defaultFrameTime);

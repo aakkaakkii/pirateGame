@@ -5,20 +5,20 @@ import org.example.physics2d.common.Vector2;
 public class JMath {
 
     public static void rotate(Vector2 vec, float angleDeg, Vector2 origin) {
-        float x= vec.x - origin.x;
-        float y= vec.y - origin.y;
+        float x = vec.x - origin.x;
+        float y = vec.y - origin.y;
 
         float cos = (float) Math.cos(Math.toRadians(angleDeg));
         float sin = (float) Math.sin(Math.toRadians(angleDeg));
 
-        float xPrime = x * cos - y * sin;
-        float yPrime = x * sin + y * cos;
+        vec.x = x * cos - y * sin + origin.x;
+        vec.y= x * sin + y * cos + origin.y;
 
-        xPrime += origin.x;
-        yPrime += origin.y;
+//        xPrime += origin.x;
+//        yPrime += origin.y;
 
-        vec.x = xPrime;
-        vec.y = yPrime;
+//        vec.x = xPrime;
+//        vec.y = yPrime;
     }
 
     public static boolean compere(float x, float y, float epsilon) {
@@ -34,6 +34,19 @@ public class JMath {
     }
 
     public static float invsqrt(float v) {
+        if(v == 0) {
+            return 0;
+        }
         return 1.0f / (float) Math.sqrt(v);
+    }
+
+    public static float clamp(float min, float max, float value) {
+        if (value < min) {
+            return min;
+        } else if (value > max) {
+            return max;
+        }
+        return value;
+
     }
 }

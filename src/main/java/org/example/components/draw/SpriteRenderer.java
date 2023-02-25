@@ -1,8 +1,10 @@
-package org.example.components;
+package org.example.components.draw;
+
+import org.example.components.Sprite;
 
 import java.awt.*;
 
-public class SpriteRenderer extends Component implements Drawer {
+public class SpriteRenderer extends Drawer {
     private Sprite sprite;
 
     public SpriteRenderer() {
@@ -17,21 +19,21 @@ public class SpriteRenderer extends Component implements Drawer {
         if(sprite != null) {
 
 
-            g2.drawImage(sprite.image,
+/*            g2.drawImage(sprite.image,
                     (int) (gameObject.transform.position.x ),
                     (int) (gameObject.transform.position.y ),
                     (int) (sprite.width * gameObject.transform.scale.x),
                     (int) (sprite.height * gameObject.transform.scale.y),
-                    null);
+                    null);*/
 
 
- /*           g2.drawImage(sprite.image,
-                    gameObject.transform.scale
-                    (int) (gameObject.transform.position.x - (sprite.width * gameObject.transform.scale.x * 0.5) ),
-                    (int) (gameObject.transform.position.y - (sprite.height * gameObject.transform.scale.y * 0.5) ),
+
+            g2.drawImage(sprite.image,
+                    (int) (gameObject.transform.position.x - sprite.width * gameObject.transform.scale.x / 2),
+                    (int) (gameObject.transform.position.y - sprite.height * gameObject.transform.scale.y / 2),
                     (int) (sprite.width * gameObject.transform.scale.x),
                     (int) (sprite.height * gameObject.transform.scale.y),
-                    null);*/
+                    null);
         }
     }
 }
