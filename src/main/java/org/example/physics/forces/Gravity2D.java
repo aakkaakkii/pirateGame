@@ -1,14 +1,15 @@
-package org.example.physics2d.forces;
+package org.example.physics.forces;
 
 import org.example.physics.RigidBody;
 import org.example.physics2d.common.Vector2;
 
-public class Gravity2D implements ForceGenerator {
+public class Gravity2D implements ForceGenerator{
     private Vector2 gravity;
 
     public Gravity2D(Vector2 force) {
         this.gravity = new Vector2(force);
     }
+
 
     @Override
     public void updateForce(RigidBody body, float dt) {

@@ -1,12 +1,13 @@
 package org.example.physics2d.forces;
 
-import org.example.physics2d.rigidbody.Rigidbody2D;
+
+import org.example.physics.RigidBody;
 
 public class ForceRegistration {
     public ForceGenerator fg;
-    public Rigidbody2D rb;
+    public RigidBody rb;
 
-    public ForceRegistration(ForceGenerator fg, Rigidbody2D rb) {
+    public ForceRegistration(ForceGenerator fg, RigidBody rb) {
         this.fg = fg;
         this.rb = rb;
     }

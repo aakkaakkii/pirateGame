@@ -36,6 +36,6 @@ public class PhysicsSystem2D {
 
     public void addRigidbody(Rigidbody2D body){
         this.rigidbodies.add(body);
-        this.forceRegistry.add(body, gravity);
+//        this.forceRegistry.add(body, gravity);
     }
 }

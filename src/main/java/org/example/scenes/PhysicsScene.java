@@ -61,14 +61,28 @@ public class PhysicsScene extends Scene {
         r2.setMass(1);
 
 
+        GameObject ground = new GameObject("ground", new Transform(new Vector2(600, 550)), 1);
+        ground.addComponent(new RectangleRenderer(800,50, new Color(0, 100, 0) ));
+        RigidBody gRb = new RigidBody();
+        gRb.setPosition(new Vector2(600, 550));
+        ground.addComponent(gRb);
+        Box2D groundBox2D = new Box2D(new Vector2(800, 50));
+        groundBox2D.setRigidBody(gRb);
+        ground.addComponent(groundBox2D);
+        gRb.setBodyType(BodyType.Static);
+        gRb.setMass(1);
+
+
         addGameObject(player);
         addGameObject(gm);
         addGameObject(g2);
+        addGameObject(ground);
 
         world = new World();
         world.addRigidBody(gmRb);
         world.addRigidBody(gmRb2);
         world.addRigidBody(r2);
+        world.addRigidBody(gRb);
     }
 
     @Override
@@ -99,15 +113,11 @@ public class PhysicsScene extends Scene {
             rb.setRotation(rb.getRotation() - 50 * dt);
         }
 
-//        this.gameObject.transform.position.add(new Vector2(direction).normalize().mul(100).mul(dt));
-//        this.gameObject.getComponent(RigidBody.class).getPosition().add(new Vector2(direction).normalize().mul(100).mul(dt));
-//        this.gameObject.getComponent(RigidBody.class).setPosition(this.gameObject.transform.position);
 
         float forceMagnitude = 1;
         Vector2 force = new Vector2(direction).mul(forceMagnitude);
 
         this.player.getComponent(RigidBody.class).addForce(force);
-
 
         for (GameObject g : gameObjects) {
             g.update(dt);

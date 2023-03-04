@@ -1,5 +1,4 @@
-package org.example.physics2d.forces;
-
+package org.example.physics.forces;
 
 import org.example.physics.RigidBody;
 
@@ -31,11 +30,6 @@ public class ForceRegistry {
         for (ForceRegistration fr : registry) {
             fr.fg.updateForce(fr.rb, dt);
         }
-    }
 
-    public void zeroForces() {
-        for (ForceRegistration fr : registry) {
-//            fr.fg.zeroForces();
-        }
     }
 }

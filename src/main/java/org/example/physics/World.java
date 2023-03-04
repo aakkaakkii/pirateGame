@@ -1,6 +1,7 @@
 package org.example.physics;
 
-import org.example.physics.primitives.Collider2D;
+import org.example.physics.forces.ForceRegistry;
+import org.example.physics.forces.Gravity2D;
 import org.example.physics2d.common.Vector2;
 
 import java.util.ArrayList;
@@ -8,17 +9,20 @@ import java.util.List;
 
 public class World {
     public static final float MIN_BODY_SIZE = 0.1f * 0.1f;
+    private ForceRegistry forceRegistry;
+    private Gravity2D gravity;
 
     private List<RigidBody> bodyList;
-    private Vector2 gravity;
 
     public World() {
-        this.gravity = new Vector2(0f, 10);
+        this.forceRegistry = new ForceRegistry();
+        this.gravity = new Gravity2D(new Vector2(0f, 2));
         this.bodyList = new ArrayList<>();
     }
 
     public void addRigidBody(RigidBody body) {
         bodyList.add(body);
+        this.forceRegistry.add(body, gravity);
     }
 
     public void removeRigidBody(RigidBody body) {
@@ -36,6 +40,8 @@ public class World {
         for (RigidBody body : bodyList) {
             body.updatePhysic(dt);
         }
+
+        forceRegistry.updateForces(dt);
 
         for (int i = 0; i < this.bodyList.size() - 1; i++) {
             RigidBody b1 = this.bodyList.get(i);
@@ -64,9 +70,6 @@ public class World {
                 }
 
             }
-            if(b1.gameObject.getName().equals("player")) {
-//                System.out.println(b1);
-            }
         }
 
 
@@ -76,10 +79,10 @@ public class World {
     public void resolveCollision(RigidBody rb1, RigidBody rb2, Vector2 normal) {
         Vector2 relativeVelocity = new Vector2(rb2.getLinearVelocity()).sub(rb1.getLinearVelocity());
 
-    /*    if(relativeVelocity.dot(normal) > 0f) {
+        if(relativeVelocity.dot(normal) < 0f) {
             return;
         }
-*/
+
         float e = Math.min(rb1.getRestitution(), rb2.getRestitution());
         float j = -(1f + e) * relativeVelocity.dot(normal);
         j /= rb1.getInverseMass() + rb2.getInverseMass();
@@ -90,7 +93,7 @@ public class World {
 
         rb2.getLinearVelocity()
                 .add(new Vector2(normal).mul(j)
-                        .mul(rb1.getInverseMass()));
+                        .mul(rb2.getInverseMass()));
 
     }
 

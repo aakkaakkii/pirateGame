@@ -14,13 +14,14 @@ public class RigidBody extends Component {
     private float mass = 0;
     private float inverseMass = 0;
     private float density = 0.0f;
-    private float restitution = 1;
+    private float restitution = .5f;
     private float area;
 
     private BodyType bodyType = BodyType.Dynamic;
 
     //TODO: change to how it is in mario
     private Vector2 force = new Vector2();
+    private Vector2 forceAccum = new Vector2();
 
     public void move(Vector2 amount) {
         this.position.add(amount);
@@ -57,12 +58,13 @@ public class RigidBody extends Component {
         {
             return;
         }
-        Vector2 acceleration = new Vector2(force).mul(inverseMass);
+        Vector2 acceleration = new Vector2(forceAccum).mul(inverseMass);
         this.linearVelocity.add(acceleration);
 
         this.position.add(new Vector2(linearVelocity).mul(dt));
         this.rotation += this.angularVelocity * dt;
         synchTransformsToGameObject();
+        clearAccumulators();
     }
 
     public void synchTransformsToGameObject() {
@@ -80,8 +82,11 @@ public class RigidBody extends Component {
         this.collider = collider;
     }
 
+    public void clearAccumulators() {
+        this.forceAccum.zero();
+    }
     public void addForce(Vector2 force) {
-        this.force = force;
+        this.forceAccum.add(force);
     }
 
     public float getMass() {
