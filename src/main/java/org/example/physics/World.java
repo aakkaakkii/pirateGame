@@ -2,13 +2,13 @@ package org.example.physics;
 
 import org.example.physics.forces.ForceRegistry;
 import org.example.physics.forces.Gravity2D;
+import org.example.physics.primitives.Box2D;
 import org.example.physics2d.common.Vector2;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class World {
-    public static final float MIN_BODY_SIZE = 0.1f * 0.1f;
     private ForceRegistry forceRegistry;
     private Gravity2D gravity;
 
@@ -34,7 +34,7 @@ public class World {
             return null;
         return bodyList.get(index);
     }
-
+float time = 0;
     public void update(float dt) {
         //movement
         for (RigidBody body : bodyList) {

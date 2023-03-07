@@ -29,12 +29,15 @@ public class PhysicsScene extends Scene {
     public void init() {
         player = new GameObject("player", new Transform(new Vector2(1000, 100)), 1);
         player.addComponent(new RectangleRenderer(100, 100));
+//        player.addComponent(new CircleRenderer(50));
         RigidBody gmRb = new RigidBody();
         gmRb.setPosition(new Vector2(1000, 100));
         player.addComponent(gmRb);
-        Box2D box2D = new Box2D(new Vector2(100, 100));
-        box2D.setRigidBody(gmRb);
-        player.addComponent(box2D);
+
+        Box2D collider = new Box2D(new Vector2(100, 100));
+//        Circle collider = new Circle(gmRb, 50);
+        collider.setRigidBody(gmRb);
+        player.addComponent(collider);
         gmRb.setMass(1);
 
 
@@ -49,13 +52,26 @@ public class PhysicsScene extends Scene {
         gmRb2.setBodyType(BodyType.Static);
         gmRb2.setMass(1);
 
+        GameObject gm3 = new GameObject("rect", new Transform(new Vector2(1200, 100)), 1);
+        gm3.addComponent(new RectangleRenderer(100, 100));
+        RigidBody gmRb3 = new RigidBody();
+        gmRb3.setPosition(new Vector2(1200, 100));
+        gm3.addComponent(gmRb3);
+        Box2D box2D3 = new Box2D(new Vector2(100, 100));
+        box2D3.setRigidBody(gmRb3);
+        gm3.addComponent(box2D3);
+        gmRb3.setBodyType(BodyType.Static);
+        gmRb3.setMass(1);
+
 
         GameObject g2 = new GameObject("circle", new Transform(new Vector2(600, 400)), 1);
         g2.addComponent(new CircleRenderer(50));
+//        g2.addComponent(new RectangleRenderer(100, 100));
         RigidBody r2 = new RigidBody();
         r2.setPosition(new Vector2(600, 100));
         g2.addComponent(r2);
         Circle c2 = new Circle(r2, 50);
+//        Box2D c2 = new Box2D(new Vector2(100, 100));
         c2.setRigidBody(r2);
         gm.addComponent(c2);
         r2.setMass(1);
@@ -77,12 +93,14 @@ public class PhysicsScene extends Scene {
         addGameObject(gm);
         addGameObject(g2);
         addGameObject(ground);
+        addGameObject(gm3);
 
         world = new World();
         world.addRigidBody(gmRb);
         world.addRigidBody(gmRb2);
         world.addRigidBody(r2);
         world.addRigidBody(gRb);
+        world.addRigidBody(gmRb3);
     }
 
     @Override

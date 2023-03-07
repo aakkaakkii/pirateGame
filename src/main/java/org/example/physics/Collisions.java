@@ -14,9 +14,11 @@ public class Collisions {
         } else if (c1 instanceof Box2D && c2 instanceof Box2D) {
             return intersectPolygons((Box2D) c1, (Box2D) c2);
         } else if(c1 instanceof Circle && c2 instanceof Box2D) {
-            return intersectCircle((Circle) c1, (Box2D) c2);
+            return intersectCirclePolygon((Circle) c1, (Box2D) c2);
         } else if(c1 instanceof Box2D && c2 instanceof Circle) {
-            return intersectCircle((Circle) c2, (Box2D) c1);
+            CollisionManifold c = intersectCirclePolygon((Circle) c2, (Box2D) c1);
+            c.getNormal().mul(-1);
+            return c;
         } else {
             assert false : "Unknown collider '" + c1.getClass() + "' vs '" + c2.getClass() + "'";
         }
@@ -42,12 +44,13 @@ public class Collisions {
         return res;
     }
 
-    public static CollisionManifold intersectCircle(Circle circle, Box2D box) {
+    public static CollisionManifold intersectCirclePolygon(Circle circle, Box2D box) {
         CollisionManifold res = new CollisionManifold();
-        Vector2[] vertices = box.getVertices();
-        res.setColliding(true);
+        res.setNormal(new Vector2());
         res.setDepth(Float.MAX_VALUE);
+        res.setColliding(true);
 
+        Vector2[] vertices = box.getVertices();
         for (int i = 0; i < vertices.length; i++) {
             Vector2 va = vertices[i];
             Vector2 vb = vertices[(i + 1) % vertices.length];
@@ -88,10 +91,9 @@ public class Collisions {
             res.setNormal(axis);
         }
 
-
-        Vector2 direction = new Vector2(circle.getRigidBody().getPosition()).sub(box.getRigidBody().getPosition());
-//        res.setDepth(res.getDepth() / res.getNormal().length());
-//        res.getNormal().normalize();
+        Vector2 direction = new Vector2(box.getRigidBody().getPosition()).sub(circle.getRigidBody().getPosition());
+        res.setDepth(res.getDepth() / res.getNormal().length());
+        res.getNormal().normalize();
         if (new Vector2(direction).dot(res.getNormal()) > 0) {
             res.getNormal().mul(-1);
         }

@@ -43,4 +43,13 @@ public class CollisionManifold {
     public void setDepth(float depth) {
         this.depth = depth;
     }
+
+    @Override
+    public String toString() {
+        return "CollisionManifold{" +
+                "isColliding=" + isColliding +
+                ", normal=" + normal +
+                ", depth=" + depth +
+                '}';
+    }
 }
