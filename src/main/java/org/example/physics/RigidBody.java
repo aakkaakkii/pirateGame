@@ -26,6 +26,7 @@ public class RigidBody extends Component {
     public void move(Vector2 amount) {
         this.position.add(amount);
         synchTransformsToGameObject();
+        rbTransformComplete();
     }
 
     public void setPosition(Vector2 position) {
@@ -43,6 +44,7 @@ public class RigidBody extends Component {
     public void setRotation(float rotation) {
         this.rotation = rotation;
         synchTransformsToGameObject();
+        rbTransformComplete();
     }
 
     public Vector2 getLinearVelocity() {
@@ -65,6 +67,13 @@ public class RigidBody extends Component {
         this.rotation += this.angularVelocity * dt;
         synchTransformsToGameObject();
         clearAccumulators();
+        rbTransformComplete();
+    }
+
+    public void rbTransformComplete() {
+        if(this.collider!=null) {
+            this.collider.rbTransformCallback();
+        }
     }
 
     public void synchTransformsToGameObject() {

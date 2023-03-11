@@ -29,6 +29,10 @@ public class JMath {
         return Math.abs(x - y) <= Float.MIN_VALUE * Math.max(1.0f, Math.max(Math.abs(x), Math.abs(y)));
     }
 
+    public static boolean compere(Vector2 vec1, Vector2 vec2) {
+        return compere(vec1.x, vec2.x) && compere(vec1.y, vec2.y);
+    }
+
     public static boolean compere(Vector2 vec1, Vector2 vec2, float epsilon) {
         return compere(vec1.x, vec2.x) && compere(vec1.y, vec2.y);
     }

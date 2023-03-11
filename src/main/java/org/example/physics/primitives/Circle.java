@@ -11,14 +11,28 @@ public class Circle extends Component implements Collider2D {
     public Circle() {
     }
 
-    public Circle(RigidBody rigidBody, float radius) {
-        this.rigidBody = rigidBody;
+    public Circle( float radius) {
         this.radius = radius;
     }
 
     public void setRigidBody(RigidBody rigidBody) {
         this.rigidBody = rigidBody;
         this.rigidBody.setCollider(this);
+    }
+
+    @Override
+    public AABB getAABB() {
+        Vector2 min = new Vector2(this.rigidBody.getPosition().x - this.radius,
+                this.rigidBody.getPosition().y - this.radius);
+        Vector2 max = new Vector2(this.rigidBody.getPosition().x + this.radius,
+                this.rigidBody.getPosition().y + this.radius);
+
+        return new AABB(min, max);
+    }
+
+    @Override
+    public void rbTransformCallback() {
+
     }
 
     public RigidBody getRigidBody() {

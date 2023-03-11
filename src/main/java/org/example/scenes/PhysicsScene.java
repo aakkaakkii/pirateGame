@@ -2,19 +2,20 @@ package org.example.scenes;
 
 import org.example.components.draw.CircleRenderer;
 import org.example.components.draw.RectangleRenderer;
-import org.example.engine.GameObject;
-import org.example.engine.Scene;
-import org.example.engine.Transform;
+import org.example.engine.*;
 import org.example.engine.Window;
 import org.example.physics.BodyType;
+import org.example.physics.CollisionManifold;
 import org.example.physics.RigidBody;
 import org.example.physics.World;
 import org.example.physics.primitives.Box2D;
 import org.example.physics.primitives.Circle;
+import org.example.physics.primitives.Collider2D;
 import org.example.physics2d.common.Vector2;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class PhysicsScene extends Scene {
     private GameObject player;
@@ -35,7 +36,7 @@ public class PhysicsScene extends Scene {
         player.addComponent(gmRb);
 
         Box2D collider = new Box2D(new Vector2(100, 100));
-//        Circle collider = new Circle(gmRb, 50);
+//        Circle collider = new Circle( 50);
         collider.setRigidBody(gmRb);
         player.addComponent(collider);
         gmRb.setMass(1);
@@ -64,17 +65,17 @@ public class PhysicsScene extends Scene {
         gmRb3.setMass(1);
 
 
-        GameObject g2 = new GameObject("circle", new Transform(new Vector2(600, 400)), 1);
+/*        GameObject g2 = new GameObject("circle", new Transform(new Vector2(600, 400)), 1);
         g2.addComponent(new CircleRenderer(50));
 //        g2.addComponent(new RectangleRenderer(100, 100));
         RigidBody r2 = new RigidBody();
         r2.setPosition(new Vector2(600, 100));
         g2.addComponent(r2);
-        Circle c2 = new Circle(r2, 50);
+        Circle c2 = new Circle( 50);
 //        Box2D c2 = new Box2D(new Vector2(100, 100));
         c2.setRigidBody(r2);
         gm.addComponent(c2);
-        r2.setMass(1);
+        r2.setMass(1);*/
 
 
         GameObject ground = new GameObject("ground", new Transform(new Vector2(600, 550)), 1);
@@ -91,16 +92,55 @@ public class PhysicsScene extends Scene {
 
         addGameObject(player);
         addGameObject(gm);
-        addGameObject(g2);
+//        addGameObject(g2);
         addGameObject(ground);
         addGameObject(gm3);
 
         world = new World();
         world.addRigidBody(gmRb);
         world.addRigidBody(gmRb2);
-        world.addRigidBody(r2);
+//        world.addRigidBody(r2);
         world.addRigidBody(gRb);
         world.addRigidBody(gmRb3);
+    }
+
+
+    public void createObject() {
+        int type;
+        if(Window.getWindow().mouseListener.mouseClicked(ML.MouseKeys.LEFT_KEY)) {
+            type = 1;
+        } else if(Window.getWindow().mouseListener.mouseClicked(ML.MouseKeys.RIGHT_KEY)) {
+            type = 2;
+        } else {
+            return;
+        }
+
+        float xPos = Window.getWindow().mouseListener.x;
+        float yPos = Window.getWindow().mouseListener.y;
+        GameObject gm = new GameObject("ground", new Transform(new Vector2(xPos, yPos)), 1);
+
+        RigidBody rb = new RigidBody();
+        rb.setPosition(new Vector2(xPos, yPos));
+        gm.addComponent(rb);
+        Collider2D collider;
+        if(type == 1) {
+            int width = ThreadLocalRandom.current().nextInt(20, 100);
+            int height = ThreadLocalRandom.current().nextInt(20, 100);
+            gm.addComponent(new RectangleRenderer(width,height ));
+            collider = new Box2D(new Vector2(width,height ));
+        } else {
+            int radius = ThreadLocalRandom.current().nextInt(20, 100);
+            gm.addComponent(new CircleRenderer(radius ));
+            collider = new Circle(radius);
+        }
+
+        collider.setRigidBody(rb);
+        gm.addComponent(type == 1 ? (Box2D)collider : (Circle) collider);
+        rb.setMass(1);
+        rb.setRestitution(ThreadLocalRandom.current().nextFloat(0.6f, 1f));
+
+        world.addRigidBody(rb);
+        addGameObject(gm);
     }
 
     @Override
@@ -131,6 +171,8 @@ public class PhysicsScene extends Scene {
             rb.setRotation(rb.getRotation() - 50 * dt);
         }
 
+        createObject();
+
 
         float forceMagnitude = 1;
         Vector2 force = new Vector2(direction).mul(forceMagnitude);
@@ -147,5 +189,15 @@ public class PhysicsScene extends Scene {
     @Override
     public void draw(Graphics2D g2) {
         renderer.render(g2);
+        for (Vector2 v : World.contactPoint) {
+            g2.setColor(Color.RED);
+            Graphics2D oldGraphics = (Graphics2D) g2.create();
+
+            oldGraphics.translate((v.x - 5 / 2), (v.y - 5 / 2));
+            oldGraphics.fillRect(0, 0, (int) 5, (int) 5);
+
+        }
+
+
     }
 }
