@@ -1,4 +1,4 @@
-package org.example.physics2d.common;
+package org.example.physics.common;
 
 public class Matrix3 {
     public float m00, m01, m02;

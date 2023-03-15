@@ -1,6 +1,6 @@
 package org.example.physics;
 
-import org.example.physics2d.common.Vector2;
+import org.example.physics.common.Vector2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +52,10 @@ public class CollisionManifold {
 
     public void addContactPoint(Vector2 contactPoint) {
         this.contactPoint.add(contactPoint);
+    }
+
+    public void addAllContactPoint(Vector2[] contactPoints) {
+        this.contactPoint.addAll(List.of(contactPoints));
     }
 
     public List<Vector2> getContactPoint() {

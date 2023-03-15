@@ -1,17 +1,14 @@
 package org.example.physics.primitives;
 
 import org.example.components.Component;
-import org.example.engine.Transform;
 import org.example.physics.RigidBody;
-import org.example.physics2d.common.Matrix3;
-import org.example.physics2d.common.Vector2;
-import org.example.utils.JMath;
+import org.example.physics.common.Matrix3;
+import org.example.physics.common.Vector2;
 
 public class Box2D extends Component implements Collider2D {
     private Vector2 size = new Vector2();
     private Vector2 halfSize = new Vector2();
     private RigidBody rigidBody = null;
-    private Vector2[] vertices;
     private Vector2[] transformVertices;
     private boolean transformUpdateRequired;
     private boolean aabbUpdateRequired;
@@ -36,40 +33,6 @@ public class Box2D extends Component implements Collider2D {
 
     public Vector2 getLocalMax() {
         return new Vector2(this.rigidBody.getPosition()).add(new Vector2(this.halfSize));
-    }
-
-    private Vector2[] createVertices() {
-        Vector2 min = getLocalMin();
-        Vector2 max = getLocalMax();
-
-        return new Vector2[]{
-                new Vector2(min.x, max.y), new Vector2(max.x, max.y),
-                new Vector2(min.x, min.y), new Vector2(max.x, min.y)
-        };
-    }
-
-    public Vector2[] getTransformVertices() {
-        if (this.transformUpdateRequired) {
-            float cos = (float) Math.cos(this.rigidBody.getRotation());
-            float sin = (float) Math.sin(this.rigidBody.getRotation());
-
-            for (int i = 0; i < this.vertices.length; i++) {
-                Matrix3 matrix = new Matrix3(
-                        cos, -sin, this.rigidBody.getPosition().x,
-                        sin, cos, this.rigidBody.getPosition().y,
-                        0, 0, 1
-                );
-                this.vertices[i].mulPosition(matrix).add(rigidBody.getPosition());
-
-/*                float x = this.rigidBody.getPosition().x;
-                float y = this.rigidBody.getPosition().y;
-                this.transformVertices[i] = new Vector2(cos * x - sin * x + x,
-                        sin * y - cos * y + y);*/
-            }
-        }
-
-
-        return this.transformVertices;
     }
 
     public Vector2[] getVertices() {
@@ -105,6 +68,19 @@ public class Box2D extends Component implements Collider2D {
                 new Vector2(transformVertices[2]),
                 new Vector2(transformVertices[3])
         };
+    }
+
+    @Override
+    public float calculateRotationalInertia() {
+        if(this.rigidBody != null) {
+            return (1f/12) * this.rigidBody.getMass() * (this.size.x * this.size.x + this.size.y * this.size.y);
+        }
+        return 0;
+    }
+
+    @Override
+    public boolean raycast(RayCastInput input, RaycastResult result) {
+        return false;
     }
 
     public RigidBody getRigidBody() {

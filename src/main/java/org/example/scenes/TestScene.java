@@ -1,12 +1,14 @@
 package org.example.scenes;
 
 import org.example.components.Spritesheet;
+import org.example.components.draw.RectangleRenderer;
 import org.example.engine.AssetPool;
 import org.example.engine.GameObject;
 import org.example.engine.Scene;
-import org.example.physics2d.PhysicsSystem2D;
-import org.example.physics2d.common.Vector2;
-import org.example.physics2d.rigidbody.Rigidbody2D;
+import org.example.physics.RigidBody;
+import org.example.physics.World;
+import org.example.physics.common.Vector2;
+import org.example.physics.primitives.Box2D;
 import org.example.tmp.LevelLoader;
 import org.example.utils.Prefabs;
 
@@ -19,6 +21,7 @@ public class TestScene extends Scene {
     private int aniTick = 0, aniIndex = 0;
     private float scaleH = 4f;
     private float scaleW = 4f;
+    World world;
 
     private int[][] levelData;
 
@@ -38,16 +41,27 @@ public class TestScene extends Scene {
         spritesheet = AssetPool.getSpritesheet("assets/outside_sprites.png");
 
         gameObject = Prefabs.generatePlayer();
+        gameObject.setDebugEnabled(true);
 
-        Rigidbody2D rb = new Rigidbody2D();
-        rb.setMass(200.0f);
+        RigidBody rb = new RigidBody();
+        rb.setMass(1);
+        rb.setPosition(new Vector2(gameObject.transform.getPosition()));
+        Box2D collider = new Box2D(new Vector2(45, 50));
+        collider.setRigidBody(rb);
         gameObject.addComponent(rb);
+
+
+        RectangleRenderer r = new RectangleRenderer(45, 50, Color.RED);
+        gameObject.addComponent(r);
 
 
 
         addGameObject(gameObject);
-        LevelLoader.loadLevel(this);
+        world = new World();
 
+        LevelLoader.loadLevel(this, world);
+
+        world.addRigidBody(rb, true);
     }
 
     @Override
@@ -67,6 +81,9 @@ public class TestScene extends Scene {
             gameObject.getComponent(StateMachine.class).trigger("stopRunning");
         }*/
 
+//        System.out.println(gameObject.transform.position);
+
+        world.update(dt);
 
         for (GameObject g : gameObjects) {
             g.update(dt);

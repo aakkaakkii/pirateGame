@@ -8,4 +8,7 @@ public interface Collider2D  {
     void setRigidBody(RigidBody rb);
     AABB getAABB();
     void rbTransformCallback();
+    float calculateRotationalInertia();
+    boolean raycast(RayCastInput input, RaycastResult result);
+
 }

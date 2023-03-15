@@ -1,7 +1,7 @@
 package org.example.engine;
 
 import org.example.components.draw.Drawer;
-import org.example.physics2d.common.Vector2;
+import org.example.physics.common.Vector2;
 
 import java.awt.*;
 import java.util.ArrayList;

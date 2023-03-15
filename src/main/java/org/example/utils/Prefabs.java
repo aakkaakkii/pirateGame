@@ -6,7 +6,7 @@ import org.example.engine.AnimationState;
 import org.example.engine.AssetPool;
 import org.example.engine.GameObject;
 import org.example.engine.Transform;
-import org.example.physics2d.common.Vector2;
+import org.example.physics.common.Vector2;
 
 public class Prefabs {
 
@@ -30,13 +30,13 @@ public class Prefabs {
 
     public static GameObject generatePlayer() {
         Spritesheet spritesheet = AssetPool.getSpritesheet("assets/player_sprites.png");
-        GameObject player = generateSpriteObject(spritesheet.sprites.get(0), 4, 4, "player", 1);
+        GameObject player = generateSpriteObject(spritesheet.sprites.get(0), 2, 2, "player", 1);
         player.transform.position.x = 300f;
         player.transform.position.y = 300f;
 
         AnimationState idle = new AnimationState();
         idle.title = "idle";
-        float defaultFrameTime = 0.2f;
+        float defaultFrameTime = 0.15f;
         idle.addFrame(spritesheet.sprites.get(0), defaultFrameTime);
         idle.addFrame(spritesheet.sprites.get(1), defaultFrameTime);
         idle.addFrame(spritesheet.sprites.get(2), defaultFrameTime);

@@ -1,6 +1,6 @@
 package org.example.utils;
 
-import org.example.physics2d.common.Vector2;
+import org.example.physics.common.Vector2;
 
 public class JMath {
 

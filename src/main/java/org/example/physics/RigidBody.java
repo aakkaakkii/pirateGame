@@ -2,20 +2,26 @@ package org.example.physics;
 
 import org.example.components.Component;
 import org.example.physics.primitives.Collider2D;
-import org.example.physics2d.common.Vector2;
+import org.example.physics.common.Vector2;
 
 public class RigidBody extends Component {
     private Collider2D collider;
     private Vector2 position;
     private Vector2 linearVelocity = new Vector2();
+
     private float rotation = 0.0f;
     private float angularVelocity = 0.0f;
+    private float inertia = 0;
+    private float invInertia = 0;
 
     private float mass = 0;
     private float inverseMass = 0;
     private float density = 0.0f;
-    private float restitution = .5f;
+    private float restitution = 0f;
     private float area;
+
+    private float staticFriction = 0.6f;
+    private float dynamicFriction = 0.4f;
 
     private BodyType bodyType = BodyType.Dynamic;
 
@@ -56,8 +62,7 @@ public class RigidBody extends Component {
     }
 
     public void updatePhysic(float dt) {
-        if(this.bodyType == BodyType.Static)
-        {
+        if (this.bodyType == BodyType.Static) {
             return;
         }
         Vector2 acceleration = new Vector2(forceAccum).mul(inverseMass);
@@ -71,7 +76,7 @@ public class RigidBody extends Component {
     }
 
     public void rbTransformComplete() {
-        if(this.collider!=null) {
+        if (this.collider != null) {
             this.collider.rbTransformCallback();
         }
     }
@@ -89,11 +94,16 @@ public class RigidBody extends Component {
 
     public void setCollider(Collider2D collider) {
         this.collider = collider;
+        this.inertia = collider.calculateRotationalInertia();
+        if (bodyType != BodyType.Static) {
+            invInertia = 1f / this.inertia;
+        }
     }
 
     public void clearAccumulators() {
         this.forceAccum.zero();
     }
+
     public void addForce(Vector2 force) {
         this.forceAccum.add(force);
     }
@@ -105,7 +115,7 @@ public class RigidBody extends Component {
     public void setMass(float mass) {
         this.mass = mass;
 //        this.inverseMass = 1/mass;
-        if(bodyType == BodyType.Static) {
+        if (bodyType == BodyType.Static) {
             this.inverseMass = 0;
         } else {
             this.inverseMass = 1 / mass;
@@ -130,6 +140,38 @@ public class RigidBody extends Component {
 
     public void setBodyType(BodyType bodyType) {
         this.bodyType = bodyType;
+    }
+
+    public float getInertia() {
+        return inertia;
+    }
+
+    public float getInvInertia() {
+        return invInertia;
+    }
+
+    public float getAngularVelocity() {
+        return angularVelocity;
+    }
+
+    public void setAngularVelocity(float angularVelocity) {
+        this.angularVelocity = angularVelocity;
+    }
+
+    public float getStaticFriction() {
+        return staticFriction;
+    }
+
+    public float getDynamicFriction() {
+        return dynamicFriction;
+    }
+
+    public void setStaticFriction(float staticFriction) {
+        this.staticFriction = staticFriction;
+    }
+
+    public void setDynamicFriction(float dynamicFriction) {
+        this.dynamicFriction = dynamicFriction;
     }
 
     @Override

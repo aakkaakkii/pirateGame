@@ -2,7 +2,8 @@ package org.example.physics;
 
 import org.example.physics.forces.ForceRegistry;
 import org.example.physics.forces.Gravity2D;
-import org.example.physics2d.common.Vector2;
+import org.example.physics.common.Vector2;
+import org.example.utils.JMath;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +19,7 @@ public class World {
 
     public World() {
         this.forceRegistry = new ForceRegistry();
-        this.gravity = new Gravity2D(new Vector2(0f, 2));
+        this.gravity = new Gravity2D(new Vector2(0f, 5));
         this.bodyList = new ArrayList<>();
 //        this.collisions = new ArrayList<>();
     }
@@ -26,6 +27,13 @@ public class World {
     public void addRigidBody(RigidBody body) {
         bodyList.add(body);
         this.forceRegistry.add(body, gravity);
+    }
+
+    public void addRigidBody(RigidBody body, boolean hasGravity) {
+        bodyList.add(body);
+        if(hasGravity) {
+            this.forceRegistry.add(body, gravity);
+        }
     }
 
     public void removeRigidBody(RigidBody body) {
@@ -38,7 +46,7 @@ public class World {
         return bodyList.get(index);
     }
 
-    float time =0;
+    float time = 0;
 
     public void update(float dt) {
         collisions.clear();
@@ -56,7 +64,7 @@ public class World {
                     continue;
                 }
 
-                if(!Collisions.isCollidingAABB(b1.getCollider().getAABB(), b2.getCollider().getAABB())) {
+                if (!Collisions.isCollidingAABB(b1.getCollider().getAABB(), b2.getCollider().getAABB())) {
                     continue;
                 }
 
@@ -75,18 +83,11 @@ public class World {
                     cm.setB1(b1);
                     cm.setB2(b2);
                     Vector2[] contact = Collisions.findContactPoint(b1.getCollider(), b2.getCollider());
-                    if(time > 0.3) {
-//                        System.out.println(Arrays.toString(contact));
-                        time = 0;
-                    }
-                    time+=dt;
 
-                    if(contact != null) {
+                    if (contact != null) {
+                        cm.addAllContactPoint(contact);
                         contactPoint.addAll(Arrays.asList(contact));
                     }
-
-
-//                    cm.addContactPoint(contact);
                     collisions.add(cm);
                 }
             }
@@ -96,6 +97,7 @@ public class World {
         //resolve collision
         for (CollisionManifold cm : collisions) {
             this.resolveCollision(cm.getB1(), cm.getB2(), cm.getNormal());
+//            this.resolveCollisionWithFriction(cm, dt);
 
         }
 
@@ -119,7 +121,7 @@ public class World {
             return;
         }
 
-        float e = Math.min(rb1.getRestitution(), rb2.getRestitution());
+        float e = Math.max(rb1.getRestitution(), rb2.getRestitution());
         float j = -(1f + e) * relativeVelocity.dot(normal);
         j /= rb1.getInverseMass() + rb2.getInverseMass();
 
@@ -130,6 +132,120 @@ public class World {
         rb2.getLinearVelocity()
                 .add(new Vector2(normal).mul(j)
                         .mul(rb2.getInverseMass()));
+
+    }
+
+    public void resolveCollisionWithFriction(CollisionManifold cm, float dt) {
+        RigidBody rb1 = cm.getB1();
+        RigidBody rb2 = cm.getB2();
+        Vector2 normal = cm.getNormal();
+        Vector2 relativeVelocity = new Vector2(rb2.getLinearVelocity()).sub(rb1.getLinearVelocity());
+
+        if (relativeVelocity.dot(normal) < 0f) {
+            return;
+        }
+
+        Vector2 tangent = new Vector2(relativeVelocity).sub(
+                new Vector2(normal).mul(relativeVelocity.dot(normal)));
+        tangent.normalize();
+
+
+        float e = Math.max(rb1.getRestitution(), rb2.getRestitution());
+        float j = -(1f + e) * relativeVelocity.dot(normal);
+        j /= rb1.getInverseMass() + rb2.getInverseMass();
+
+        float sf = (rb1.getStaticFriction() + rb2.getStaticFriction()) * 0.5f;
+        float df = (rb1.getDynamicFriction() + rb2.getDynamicFriction()) * 0.5f;
+
+        Vector2 impulse = new Vector2(normal).mul(j);
+
+        if (!JMath.compere(tangent, new Vector2())) {
+            impulse.add(new Vector2(tangent).mul(-1).mul(df));
+        }
+
+        rb1.getLinearVelocity()
+                .sub(new Vector2(impulse)
+                        .mul(rb1.getInverseMass()));
+        if (rb1.getLinearVelocity().x < .5 && rb1.getLinearVelocity().x > -.5)
+            rb1.getLinearVelocity().x = 0;
+        if (rb1.getLinearVelocity().y < .5 && rb1.getLinearVelocity().y > -.5)
+            rb1.getLinearVelocity().y = 0;
+
+        rb2.getLinearVelocity()
+                .add(new Vector2(impulse)
+                        .mul(rb2.getInverseMass()));
+        if (rb2.getLinearVelocity().x < .5 && rb2.getLinearVelocity().x > -.5)
+            rb2.getLinearVelocity().x = 0;
+        if (rb2.getLinearVelocity().y < .5 && rb2.getLinearVelocity().y > -.5)
+            rb2.getLinearVelocity().y = 0;
+
+    }
+
+
+    public void resolveCollisionWithRotation(CollisionManifold cm) {
+        RigidBody rb1 = cm.getB1();
+        RigidBody rb2 = cm.getB2();
+        Vector2 normal = cm.getNormal();
+        Vector2[] impulseList = {new Vector2(), new Vector2()};
+        Vector2[] raList = {new Vector2(), new Vector2()};
+        Vector2[] rbList = {new Vector2(), new Vector2()};
+
+        float e = Math.max(rb1.getRestitution(), rb2.getRestitution());
+
+
+        for (int i = 0; i < cm.getContactPoint().size(); i++) {
+            Vector2 v = cm.getContactPoint().get(i);
+            Vector2 ra = new Vector2(v).sub(rb1.getPosition());
+            Vector2 rb = new Vector2(v).sub(rb2.getPosition());
+
+            raList[i] = ra;
+            rbList[i] = rb;
+
+            Vector2 raPer = new Vector2(-ra.y, ra.x);
+            Vector2 rbPer = new Vector2(-rb.y, rb.x);
+
+            Vector2 angularLinearVelocityA = new Vector2(raPer).mul(rb1.getLinearVelocity());
+            Vector2 angularLinearVelocityB = new Vector2(rbPer).mul(rb2.getLinearVelocity());
+
+            Vector2 relativeVelocity = new Vector2(rb2.getLinearVelocity()).add(angularLinearVelocityB)
+                    .sub(rb1.getLinearVelocity()).sub(angularLinearVelocityA);
+
+            float contactVelocityMag = relativeVelocity.dot(normal);
+
+            if (contactVelocityMag < 0f) {
+                continue;
+            }
+
+            float raPerpDotN = raPer.dot(normal);
+            float rbPerpDotN = rbPer.dot(normal);
+            float denom = rb1.getInverseMass() + rb2.getInverseMass()
+                    + (raPerpDotN * raPerpDotN) * rb1.getInvInertia()
+                    + (rbPerpDotN * rbPerpDotN) * rb2.getInvInertia();
+
+            float j = -(1f + e) * contactVelocityMag;
+            j /= denom;
+            j /= cm.getContactPoint().size();
+
+            impulseList[i] = new Vector2(normal).mul(j);
+        }
+
+        for (int i = 0; i < impulseList.length; i++) {
+            Vector2 impulse = impulseList[i];
+
+            Vector2 ra = raList[i];
+            Vector2 rb = rbList[i];
+
+            rb1.getLinearVelocity()
+                    .sub(new Vector2(impulse)
+                            .mul(rb1.getInverseMass()));
+            rb1.setAngularVelocity(rb1.getAngularVelocity() - ra.cross(impulse) * rb1.getInvInertia());
+
+            rb2.getLinearVelocity()
+                    .add(new Vector2(impulse)
+                            .mul(rb2.getInverseMass()));
+            rb2.setAngularVelocity(rb2.getAngularVelocity() + rb.cross(impulse) * rb2.getInvInertia());
+
+        }
 
     }
 

@@ -29,10 +29,6 @@ public class RectangleRenderer extends Drawer {
         oldGraphics.translate((this.gameObject.transform.position.x - width / 2), (this.gameObject.transform.position.y - height / 2));
         oldGraphics.rotate(Math.toRadians(this.gameObject.transform.rotation), width / 2.0, height / 2.0);
         oldGraphics.drawRect(0, 0, (int) width, (int) height);
-/*
-        oldGraphics.drawRect((int) (this.gameObject.transform.position.x - width / 2),
-                (int) (this.gameObject.transform.position.y - height / 2),
-                (int) width, (int) height);*/
         oldGraphics.dispose();
     }
 }

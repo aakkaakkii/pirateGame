@@ -51,8 +51,10 @@ public class Window extends JFrame implements Runnable {
         switch (scene) {
             case 0:
                 this.currentScene = new TestScene();
+                break;
             case 1:
                 this.currentScene = new PhysicsScene();
+                break;
         }
     }
 

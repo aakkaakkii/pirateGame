@@ -1,7 +1,7 @@
 package org.example.physics.forces;
 
 import org.example.physics.RigidBody;
-import org.example.physics2d.common.Vector2;
+import org.example.physics.common.Vector2;
 
 public class Gravity2D implements ForceGenerator{
     private Vector2 gravity;

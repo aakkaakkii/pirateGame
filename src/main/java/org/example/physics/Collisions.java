@@ -4,10 +4,8 @@ import org.example.physics.primitives.AABB;
 import org.example.physics.primitives.Box2D;
 import org.example.physics.primitives.Circle;
 import org.example.physics.primitives.Collider2D;
-import org.example.physics2d.common.Vector2;
+import org.example.physics.common.Vector2;
 import org.example.utils.JMath;
-
-import java.util.List;
 
 
 public class Collisions {
@@ -266,17 +264,17 @@ public class Collisions {
             Vector2 p = verticesA[i];
             for (int j = 0; j < verticesB.length; j++) {
                 Vector2 va = verticesB[j];
-                Vector2 vb = verticesB[(j+1) % verticesB.length];
+                Vector2 vb = verticesB[(j + 1) % verticesB.length];
 
                 Contact contact = pointSegmentDistance(p, va, vb);
 
-                if(JMath.compere(contact.distanceSqr, minDistanceSqr)) {
-                    if(!JMath.compere(contact.contact, res[0])
+                if (JMath.compere(contact.distanceSqr, minDistanceSqr)) {
+                    if (!JMath.compere(contact.contact, res[0])
                             && !JMath.compere(contact.contact, res[1])) {
                         res[1] = contact.contact;
                     }
-                }else if(contact.distanceSqr < minDistanceSqr) {
-                    minDistanceSqr = contact.distanceSqr ;
+                } else if (contact.distanceSqr < minDistanceSqr) {
+                    minDistanceSqr = contact.distanceSqr;
                     res[0] = contact.contact;
                 }
             }
@@ -286,17 +284,17 @@ public class Collisions {
             Vector2 p = verticesB[i];
             for (int j = 0; j < verticesA.length; j++) {
                 Vector2 va = verticesA[j];
-                Vector2 vb = verticesA[(j+1) % verticesA.length];
+                Vector2 vb = verticesA[(j + 1) % verticesA.length];
 
                 Contact contact = pointSegmentDistance(p, va, vb);
 
-                if(JMath.compere(contact.distanceSqr, minDistanceSqr)) {
-                    if(!JMath.compere(contact.contact, res[0])
+                if (JMath.compere(contact.distanceSqr, minDistanceSqr)) {
+                    if (!JMath.compere(contact.contact, res[0])
                             && !JMath.compere(contact.contact, res[1])) {
                         res[1] = contact.contact;
                     }
-                } else if(contact.distanceSqr < minDistanceSqr) {
-                    minDistanceSqr = contact.distanceSqr ;
+                } else if (contact.distanceSqr < minDistanceSqr) {
+                    minDistanceSqr = contact.distanceSqr;
                     res[0] = contact.contact;
                 }
             }
@@ -322,6 +320,12 @@ public class Collisions {
         }
         return new Vector2[]{cp};
     }
+
+
+    public static void findMinContactPoint() {
+
+    }
+
 
     public static Vector2[] findContactPoint(Circle c1, Circle c2) {
         Vector2 ab = new Vector2(c2.getRigidBody().getPosition()).sub(c1.getRigidBody().getPosition());

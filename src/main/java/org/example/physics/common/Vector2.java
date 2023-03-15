@@ -1,4 +1,4 @@
-package org.example.physics2d.common;
+package org.example.physics.common;
 
 import org.example.utils.JMath;
 
@@ -97,6 +97,10 @@ public class Vector2 {
         this.x = rx;
         this.y = ry;
         return this;
+    }
+
+    public float cross(Vector2 v) {
+        return this.x * v.y - this.y * v.x;
     }
 
     @Override

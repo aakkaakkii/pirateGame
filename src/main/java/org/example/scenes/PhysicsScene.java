@@ -1,17 +1,15 @@
 package org.example.scenes;
 
 import org.example.components.draw.CircleRenderer;
+import org.example.components.draw.LineDrawer;
 import org.example.components.draw.RectangleRenderer;
 import org.example.engine.*;
 import org.example.engine.Window;
 import org.example.physics.BodyType;
-import org.example.physics.CollisionManifold;
 import org.example.physics.RigidBody;
 import org.example.physics.World;
-import org.example.physics.primitives.Box2D;
-import org.example.physics.primitives.Circle;
-import org.example.physics.primitives.Collider2D;
-import org.example.physics2d.common.Vector2;
+import org.example.physics.primitives.*;
+import org.example.physics.common.Vector2;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -29,40 +27,42 @@ public class PhysicsScene extends Scene {
     @Override
     public void init() {
         player = new GameObject("player", new Transform(new Vector2(1000, 100)), 1);
-        player.addComponent(new RectangleRenderer(100, 100));
-//        player.addComponent(new CircleRenderer(50));
+//        player.addComponent(new RectangleRenderer(100, 100));
+        player.addComponent(new CircleRenderer(50));
         RigidBody gmRb = new RigidBody();
+        gmRb.setMass(1);
         gmRb.setPosition(new Vector2(1000, 100));
         player.addComponent(gmRb);
 
-        Box2D collider = new Box2D(new Vector2(100, 100));
-//        Circle collider = new Circle( 50);
+//        Box2D collider = new Box2D(new Vector2(100, 100));
+        Circle collider = new Circle(50);
         collider.setRigidBody(gmRb);
         player.addComponent(collider);
-        gmRb.setMass(1);
 
 
-        GameObject gm = new GameObject("rect", new Transform(new Vector2(300, 100)), 1);
-        gm.addComponent(new RectangleRenderer(100, 100));
+        GameObject gm = new GameObject("rect", new Transform(new Vector2(400, 200), 20), 1);
+        gm.addComponent(new RectangleRenderer(400, 30));
         RigidBody gmRb2 = new RigidBody();
-        gmRb2.setPosition(new Vector2(300, 100));
-        gm.addComponent(gmRb2);
-        Box2D box2D2 = new Box2D(new Vector2(100, 100));
-        box2D2.setRigidBody(gmRb2);
-        gm.addComponent(box2D2);
         gmRb2.setBodyType(BodyType.Static);
         gmRb2.setMass(1);
+        gmRb2.setPosition(new Vector2(400, 200));
+        gmRb2.setRotation(20);
+        gm.addComponent(gmRb2);
+        Box2D box2D2 = new Box2D(new Vector2(400, 30));
+        box2D2.setRigidBody(gmRb2);
+        gm.addComponent(box2D2);
 
-        GameObject gm3 = new GameObject("rect", new Transform(new Vector2(1200, 100)), 1);
-        gm3.addComponent(new RectangleRenderer(100, 100));
+        GameObject gm3 = new GameObject("rect", new Transform(new Vector2(800, 100), -30), 1);
+        gm3.addComponent(new RectangleRenderer(300, 30));
         RigidBody gmRb3 = new RigidBody();
-        gmRb3.setPosition(new Vector2(1200, 100));
-        gm3.addComponent(gmRb3);
-        Box2D box2D3 = new Box2D(new Vector2(100, 100));
-        box2D3.setRigidBody(gmRb3);
-        gm3.addComponent(box2D3);
         gmRb3.setBodyType(BodyType.Static);
         gmRb3.setMass(1);
+        gmRb3.setPosition(new Vector2(800, 100));
+        gmRb3.setRotation(-30);
+        gm3.addComponent(gmRb3);
+        Box2D box2D3 = new Box2D(new Vector2(300, 30));
+        box2D3.setRigidBody(gmRb3);
+        gm3.addComponent(box2D3);
 
 
 /*        GameObject g2 = new GameObject("circle", new Transform(new Vector2(600, 400)), 1);
@@ -79,25 +79,29 @@ public class PhysicsScene extends Scene {
 
 
         GameObject ground = new GameObject("ground", new Transform(new Vector2(600, 550)), 1);
-        ground.addComponent(new RectangleRenderer(800,50, new Color(0, 100, 0) ));
+        ground.addComponent(new RectangleRenderer(800, 50, new Color(0, 100, 0)));
         RigidBody gRb = new RigidBody();
+        gRb.setBodyType(BodyType.Static);
+        gRb.setMass(1);
         gRb.setPosition(new Vector2(600, 550));
         ground.addComponent(gRb);
         Box2D groundBox2D = new Box2D(new Vector2(800, 50));
         groundBox2D.setRigidBody(gRb);
         ground.addComponent(groundBox2D);
-        gRb.setBodyType(BodyType.Static);
-        gRb.setMass(1);
 
+
+        GameObject line = new GameObject("line", new Transform(new Vector2(50, 300)), 1);
+        line.addComponent(new LineDrawer(new Vector2(50, 300), new Vector2(300, 400), Color.RED));
 
         addGameObject(player);
+        addGameObject(line);
         addGameObject(gm);
 //        addGameObject(g2);
         addGameObject(ground);
         addGameObject(gm3);
 
         world = new World();
-        world.addRigidBody(gmRb);
+        world.addRigidBody(gmRb, false);
         world.addRigidBody(gmRb2);
 //        world.addRigidBody(r2);
         world.addRigidBody(gRb);
@@ -107,9 +111,9 @@ public class PhysicsScene extends Scene {
 
     public void createObject() {
         int type;
-        if(Window.getWindow().mouseListener.mouseClicked(ML.MouseKeys.LEFT_KEY)) {
+        if (Window.getWindow().mouseListener.mouseClicked(ML.MouseKeys.LEFT_KEY)) {
             type = 1;
-        } else if(Window.getWindow().mouseListener.mouseClicked(ML.MouseKeys.RIGHT_KEY)) {
+        } else if (Window.getWindow().mouseListener.mouseClicked(ML.MouseKeys.RIGHT_KEY)) {
             type = 2;
         } else {
             return;
@@ -120,28 +124,34 @@ public class PhysicsScene extends Scene {
         GameObject gm = new GameObject("ground", new Transform(new Vector2(xPos, yPos)), 1);
 
         RigidBody rb = new RigidBody();
+        rb.setMass(1);
         rb.setPosition(new Vector2(xPos, yPos));
         gm.addComponent(rb);
         Collider2D collider;
-        if(type == 1) {
-            int width = ThreadLocalRandom.current().nextInt(20, 100);
-            int height = ThreadLocalRandom.current().nextInt(20, 100);
-            gm.addComponent(new RectangleRenderer(width,height ));
-            collider = new Box2D(new Vector2(width,height ));
+        if (type == 1) {
+            int width = ThreadLocalRandom.current().nextInt(20, 50);
+            int height = ThreadLocalRandom.current().nextInt(20, 50);
+            gm.addComponent(new RectangleRenderer(width, height));
+            collider = new Box2D(new Vector2(width, height));
         } else {
-            int radius = ThreadLocalRandom.current().nextInt(20, 100);
-            gm.addComponent(new CircleRenderer(radius ));
+            int radius = ThreadLocalRandom.current().nextInt(20, 60);
+            gm.addComponent(new CircleRenderer(radius));
             collider = new Circle(radius);
         }
 
         collider.setRigidBody(rb);
-        gm.addComponent(type == 1 ? (Box2D)collider : (Circle) collider);
-        rb.setMass(1);
+        gm.addComponent(type == 1 ? (Box2D) collider : (Circle) collider);
         rb.setRestitution(ThreadLocalRandom.current().nextFloat(0.6f, 1f));
 
         world.addRigidBody(rb);
         addGameObject(gm);
     }
+
+    private Vector2 velocity = new Vector2();
+    private Vector2 acceleration = new Vector2();
+    public float walkSpeed = 1.5f;
+    public float slowDownForce = 1f;
+    public Vector2 terminalVelocity = new Vector2(250.1f, 3.1f);
 
     @Override
     public void update(float dt) {
@@ -171,7 +181,13 @@ public class PhysicsScene extends Scene {
             rb.setRotation(rb.getRotation() - 50 * dt);
         }
 
-        createObject();
+//        createObject();
+
+        RaycastResult raycastResult = new RaycastResult();
+        RayCastInput rayCastInput = new RayCastInput(new Vector2(50, 300), new Vector2(300, 400));
+        if (this.player.getComponent(Circle.class).raycast(rayCastInput, raycastResult)) {
+            System.out.println("cross");
+        }
 
 
         float forceMagnitude = 1;
