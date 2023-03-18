@@ -1,14 +1,17 @@
 package org.example.scenes;
 
 import org.example.components.Spritesheet;
+import org.example.components.draw.LineDrawer;
 import org.example.components.draw.RectangleRenderer;
 import org.example.engine.AssetPool;
 import org.example.engine.GameObject;
 import org.example.engine.Scene;
+import org.example.engine.Window;
 import org.example.physics.RigidBody;
 import org.example.physics.World;
 import org.example.physics.common.Vector2;
 import org.example.physics.primitives.Box2D;
+import org.example.physics.primitives.RaycastResult;
 import org.example.tmp.LevelLoader;
 import org.example.utils.Prefabs;
 
@@ -21,7 +24,6 @@ public class TestScene extends Scene {
     private int aniTick = 0, aniIndex = 0;
     private float scaleH = 4f;
     private float scaleW = 4f;
-    World world;
 
     private int[][] levelData;
 
@@ -46,13 +48,13 @@ public class TestScene extends Scene {
         RigidBody rb = new RigidBody();
         rb.setMass(1);
         rb.setPosition(new Vector2(gameObject.transform.getPosition()));
-        Box2D collider = new Box2D(new Vector2(45, 50));
+        Box2D collider = new Box2D(new Vector2(40, 50));
         collider.setRigidBody(rb);
         gameObject.addComponent(rb);
 
 
-        RectangleRenderer r = new RectangleRenderer(45, 50, Color.RED);
-        gameObject.addComponent(r);
+//        RectangleRenderer r = new RectangleRenderer(40, 50, Color.RED);
+//        gameObject.addComponent(r);
 
 
 
@@ -94,6 +96,37 @@ public class TestScene extends Scene {
     @Override
     public void draw(Graphics2D g2) {
         renderer.render(g2);
+
+        float innerPlayerWidth = 38;
+
+        float yVal = 26;
+
+        Vector2 raycastBegin = new Vector2(gameObject.transform.position);
+        raycastBegin.sub(innerPlayerWidth / 2.0f, 0.0f);
+        Vector2 raycastEnd = new Vector2(raycastBegin).add(0.0f, yVal);
+
+        Vector2 p1 = new Vector2(100, 300);
+        Vector2 p2 = new Vector2(110, 500);
+
+//        RaycastResult info = org.example.engine.Window.getCurrentScene().world.raycast(raycastBegin, raycastEnd);
+//        RaycastResult info = org.example.engine.Window.getCurrentScene().world.raycast(p1, p2);
+
+//        System.out.println(info.isHit() );
+
+        g2.setColor(Color.MAGENTA);
+        g2.drawLine((int)raycastBegin.x, (int)raycastBegin.y, (int)raycastEnd.x, (int)raycastEnd.y);
+        g2.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
+
+        Vector2 raycast2Begin = new Vector2(raycastBegin).add(innerPlayerWidth, 0.0f);
+        Vector2 raycast2End = new Vector2(raycastEnd).add(innerPlayerWidth, 0.0f);
+//
+//
+        g2.setColor(Color.MAGENTA);
+        g2.drawLine((int)raycast2Begin.x, (int)raycast2Begin.y, (int)raycast2End.x, (int)raycast2End.y);
+
+
+
+
 //        g2.setColor(Color.BLACK);
 //        g2.fillRect(600,(int)(xDelta + 100), 200, 50);
 

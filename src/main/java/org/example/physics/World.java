@@ -1,8 +1,9 @@
 package org.example.physics;
 
+import org.example.physics.common.Vector2;
 import org.example.physics.forces.ForceRegistry;
 import org.example.physics.forces.Gravity2D;
-import org.example.physics.common.Vector2;
+import org.example.physics.primitives.*;
 import org.example.utils.JMath;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class World {
 
     public World() {
         this.forceRegistry = new ForceRegistry();
-        this.gravity = new Gravity2D(new Vector2(0f, 5));
+        this.gravity = new Gravity2D(new Vector2(0f, 6));
         this.bodyList = new ArrayList<>();
 //        this.collisions = new ArrayList<>();
     }
@@ -31,7 +32,7 @@ public class World {
 
     public void addRigidBody(RigidBody body, boolean hasGravity) {
         bodyList.add(body);
-        if(hasGravity) {
+        if (hasGravity) {
             this.forceRegistry.add(body, gravity);
         }
     }
@@ -64,7 +65,7 @@ public class World {
                     continue;
                 }
 
-                if (!Collisions.isCollidingAABB(b1.getCollider().getAABB(), b2.getCollider().getAABB())) {
+                if (!b1.getCollider().getAABB().overlap(b2.getCollider().getAABB())) {
                     continue;
                 }
 
@@ -247,6 +248,39 @@ public class World {
 
         }
 
+    }
+
+    public void raycast(RaycastCallback rayCastCallback, Vector2 p1, Vector2 p2) {
+        Vector2 min = new Vector2(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
+        Vector2 max =new Vector2(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
+
+        AABB rayAABB = new AABB(min, max);
+        List<Collider2D> potentialColliders = new ArrayList<>();
+
+        for (RigidBody rb : this.bodyList) {
+            if(rayAABB.overlap(rb.getCollider().getAABB())) {
+                potentialColliders.add(rb.getCollider());
+            }
+        }
+
+
+        potentialColliders.sort((b1, b2) -> {
+            float firstLengthSquared = p1.lengthSquared() - b1.getRigidBody().getPosition().lengthSquared();
+            float secondLengthSquared = p1.lengthSquared() - b2.getRigidBody().getPosition().lengthSquared();
+            return (int) (firstLengthSquared - secondLengthSquared) * (-1);
+        });
+
+        RayCastInput input = new RayCastInput(p1, p2);
+        RaycastResult result = new RaycastResult();
+        for (Collider2D potentialCollider : potentialColliders) {
+            if(potentialCollider.raycast(input, result)) {
+                result.setCollider2D(potentialCollider);
+                if(rayCastCallback.reportHit(input, result)) {
+                    break;
+                }
+            }
+
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package org.example.tmp;
 
+import org.example.components.Ground;
 import org.example.components.Spritesheet;
 import org.example.components.draw.RectangleRenderer;
 import org.example.engine.AssetPool;
@@ -46,23 +47,32 @@ public class LevelLoader {
                 GameObject go = Prefabs.generateSpriteObject(spr.sprites.get(value), Window.SCALE, Window.SCALE, "Block");
                 go.transform.position.x = i * size * Window.SCALE + size * Window.SCALE/2;
                 go.transform.position.y = j * size * Window.SCALE + size * Window.SCALE/2;
-                scene.addGameObject(go);
 
                 if(color.getRed() == 1 || color.getRed() == 0 ||
-                        color.getRed() == 2 || color.getRed() == 14) {
+                        color.getRed() == 2 || color.getRed() == 14
+                || color.getRed() == 12 || color.getRed() == 39) {
                     RigidBody rb = new RigidBody();
                     rb.setBodyType(BodyType.Static);
                     rb.setMass(1);
                     rb.setPosition(new Vector2(go.transform.position.x, go.transform.position.y));
                     Box2D collider = new Box2D(new Vector2(size * Window.SCALE, size * Window.SCALE));
                     collider.setRigidBody(rb);
+                    go.addComponent(rb);
+                    go.addComponent(new Ground());
 
                     RectangleRenderer r = new RectangleRenderer(size * Window.SCALE, size * Window.SCALE, Color.YELLOW);
                     go.addComponent(r);
                     go.setDebugEnabled(true);
 
+
+                    if(color.getRed() == 1 || color.getRed() == 0 || color.getRed() == 2 || color.getRed() == 39) {
+                    }
+
+
                     world.addRigidBody(rb);
                 }
+
+                scene.addGameObject(go);
 
 /*                g2.drawImage(spritesheet.sprites.get(levelData[i][j]).image,
                         i * Window.TILES_SIZE, j * Window.TILES_SIZE,

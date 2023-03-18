@@ -1,6 +1,7 @@
 package org.example.engine;
 
 import org.example.components.Component;
+import org.example.physics.World;
 import org.example.physics.common.Vector2;
 
 import java.awt.*;
@@ -12,6 +13,7 @@ public abstract class Scene {
     public Camera camera;
     public List<GameObject> gameObjects;
     public Renderer renderer;
+    public World world;
 
     public Scene(String name) {
         this.name = name;
@@ -35,4 +37,8 @@ public abstract class Scene {
     public abstract void update(float dt);
 
     public abstract void draw(Graphics2D g2);
+
+    public World getWorld() {
+        return this.world;
+    }
 }

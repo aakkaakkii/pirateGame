@@ -1,5 +1,6 @@
 package org.example.scenes;
 
+import org.example.components.RaycastInfo;
 import org.example.components.draw.CircleRenderer;
 import org.example.components.draw.LineDrawer;
 import org.example.components.draw.RectangleRenderer;
@@ -10,6 +11,7 @@ import org.example.physics.RigidBody;
 import org.example.physics.World;
 import org.example.physics.primitives.*;
 import org.example.physics.common.Vector2;
+import org.example.utils.JMath;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -17,8 +19,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class PhysicsScene extends Scene {
     private GameObject player;
-    World world;
-
+    Vector2 p1;
+    Vector2 p2;
 
     public PhysicsScene() {
         super("Physics");
@@ -26,16 +28,16 @@ public class PhysicsScene extends Scene {
 
     @Override
     public void init() {
-        player = new GameObject("player", new Transform(new Vector2(1000, 100)), 1);
-//        player.addComponent(new RectangleRenderer(100, 100));
-        player.addComponent(new CircleRenderer(50));
+        player = new GameObject("player", new Transform(new Vector2(40, 180)), 1);
+        player.addComponent(new RectangleRenderer(100, 100));
+//        player.addComponent(new CircleRenderer(50));
         RigidBody gmRb = new RigidBody();
         gmRb.setMass(1);
-        gmRb.setPosition(new Vector2(1000, 100));
+        gmRb.setPosition(new Vector2(40, 180));
         player.addComponent(gmRb);
 
-//        Box2D collider = new Box2D(new Vector2(100, 100));
-        Circle collider = new Circle(50);
+        Box2D collider = new Box2D(new Vector2(100, 100));
+//        Circle collider = new Circle(50);
         collider.setRigidBody(gmRb);
         player.addComponent(collider);
 
@@ -90,8 +92,10 @@ public class PhysicsScene extends Scene {
         ground.addComponent(groundBox2D);
 
 
+        p1 = new Vector2(50, 300);
+        p2 = new Vector2(50, 200);
         GameObject line = new GameObject("line", new Transform(new Vector2(50, 300)), 1);
-        line.addComponent(new LineDrawer(new Vector2(50, 300), new Vector2(300, 400), Color.RED));
+        line.addComponent(new LineDrawer(p1, p2, Color.RED));
 
         addGameObject(player);
         addGameObject(line);
@@ -183,11 +187,7 @@ public class PhysicsScene extends Scene {
 
 //        createObject();
 
-        RaycastResult raycastResult = new RaycastResult();
-        RayCastInput rayCastInput = new RayCastInput(new Vector2(50, 300), new Vector2(300, 400));
-        if (this.player.getComponent(Circle.class).raycast(rayCastInput, raycastResult)) {
-            System.out.println("cross");
-        }
+
 
 
         float forceMagnitude = 1;
@@ -205,6 +205,42 @@ public class PhysicsScene extends Scene {
     @Override
     public void draw(Graphics2D g2) {
         renderer.render(g2);
+
+        RaycastInfo raycastResult = new RaycastInfo(null);
+
+        world.raycast(raycastResult, new Vector2(p1), new Vector2(p2));
+//        RayCastInput rayCastInput = new RayCastInput(new Vector2(p1), );
+        if (raycastResult.hit) {
+            System.out.println("cross");
+            g2.setColor(Color.GREEN);
+            Graphics2D oldGraphics = (Graphics2D) g2.create();
+
+            oldGraphics.translate((raycastResult.point.x - 5 / 2), (raycastResult.point.y - 5 / 2));
+            oldGraphics.fillRect(0, 0, (int) 5, (int) 5);
+
+        }
+
+        Vector2 min = new Vector2(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
+        Vector2 max =new Vector2(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
+
+        g2.setColor(Color.GREEN);
+
+        g2.fillRect((int)min.x,(int) min.y, (int) 5, (int) 5);
+        g2.fillRect((int)max.x, (int)max.y, (int) 5, (int) 5);
+
+
+//        Vector2 maxV = this.player.getComponent(Box2D.class).getAABB().getMax();
+//        Vector2 minV = this.player.getComponent(Box2D.class).getAABB().getMin();
+
+//        g2.drawLine(100,0,
+//                (int)JMath.clamp(minV.x, maxV.x, this.player.getComponent(Box2D.class).getRigidBody().getPosition().x),
+//                (int)JMath.clamp(minV.y, maxV.y, this.player.getComponent(Box2D.class).getRigidBody().getPosition().y));
+
+
+//        g2.fillRect((int)this.player.getComponent(Box2D.class).getAABB().getMin().x,(int)this.player.getComponent(Box2D.class).getAABB().getMin().y, (int) 5, (int) 5);
+//        g2.fillRect((int)this.player.getComponent(Box2D.class).getAABB().getMax().x, (int)this.player.getComponent(Box2D.class).getAABB().getMax().y, (int) 5, (int) 5);
+
+
         for (Vector2 v : World.contactPoint) {
             g2.setColor(Color.RED);
             Graphics2D oldGraphics = (Graphics2D) g2.create();

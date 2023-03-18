@@ -36,7 +36,7 @@ public class Prefabs {
 
         AnimationState idle = new AnimationState();
         idle.title = "idle";
-        float defaultFrameTime = 0.15f;
+        float defaultFrameTime = 0.1f;
         idle.addFrame(spritesheet.sprites.get(0), defaultFrameTime);
         idle.addFrame(spritesheet.sprites.get(1), defaultFrameTime);
         idle.addFrame(spritesheet.sprites.get(2), defaultFrameTime);
@@ -66,12 +66,21 @@ public class Prefabs {
         switchDirection.addFrame(spritesheet.sprites.get(0), defaultFrameTime);
         attack.setLoop(false);
 
+
+        AnimationState jump = new AnimationState();
+        jump.title = "jump";
+        jump.addFrame(spritesheet.sprites.get(12), defaultFrameTime);
+        jump.addFrame(spritesheet.sprites.get(13), defaultFrameTime);
+        jump.addFrame(spritesheet.sprites.get(14), defaultFrameTime);
+        jump.setLoop(false);
+
         StateMachine stateMachine = new StateMachine();
         stateMachine.addState(idle);
         stateMachine.setDefaultState(idle.title);
         stateMachine.addState(run);
         stateMachine.addState(attack);
         stateMachine.addState(switchDirection);
+        stateMachine.addState(jump);
 
         stateMachine.addState(idle.title, run.title, "startRunning");
         stateMachine.addState(run.title, idle.title, "stopRunning");
@@ -80,6 +89,11 @@ public class Prefabs {
         stateMachine.addState(run.title, attack.title, "attack");
         stateMachine.addState(attack.title, idle.title, "stopAttack");
         stateMachine.addState(run.title, switchDirection.title, "switchDirection");
+
+        stateMachine.addState(idle.title, jump.title, "jump");
+        stateMachine.addState(run.title, jump.title, "jump");
+        stateMachine.addState(switchDirection.title, jump.title, "jump");
+        stateMachine.addState(jump.title, idle.title, "stopJump");
 
 
         player.addComponent(new SpriteRenderer());

@@ -30,9 +30,21 @@ public class Vector2 {
         return this;
     }
 
+    public Vector2 sub(float x, float y) {
+        this.x = this.x - x;
+        this.y = this.y - y;
+        return this;
+    }
+
     public Vector2 add(Vector2 v) {
         this.x = x + v.x;
         this.y = y + v.y;
+        return this;
+    }
+
+    public Vector2 add(float x, float y) {
+        this.x = this.x + x;
+        this.y = this.y + y;
         return this;
     }
 
@@ -102,6 +114,32 @@ public class Vector2 {
     public float cross(Vector2 v) {
         return this.x * v.y - this.y * v.x;
     }
+
+    public float get(int component) throws IllegalArgumentException {
+        switch (component) {
+            case 0:
+                return x;
+            case 1:
+                return y;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    public Vector2 setComponent(int component, float value) throws IllegalArgumentException {
+        switch (component) {
+            case 0:
+                x = value;
+                break;
+            case 1:
+                y = value;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        return this;
+    }
+
 
     @Override
     public String toString() {

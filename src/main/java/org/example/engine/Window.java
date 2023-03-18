@@ -1,5 +1,6 @@
 package org.example.engine;
 
+import org.example.scenes.MenuScene;
 import org.example.scenes.PhysicsScene;
 import org.example.scenes.TestScene;
 import org.example.utils.Constants;
@@ -15,7 +16,7 @@ public class Window extends JFrame implements Runnable {
 
     private static Window window = new Window();
     private boolean isRunning = true;
-    private Scene currentScene = null;
+    private static Scene currentScene = null;
     private Image doubleBufferImage = null;
     private Graphics doubleBufferGraphics = null;
 
@@ -43,7 +44,7 @@ public class Window extends JFrame implements Runnable {
     }
 
     public void init() {
-        changeScene(1);
+        changeScene(2);
         currentScene.init();
     }
 
@@ -55,10 +56,13 @@ public class Window extends JFrame implements Runnable {
             case 1:
                 this.currentScene = new PhysicsScene();
                 break;
+            case 2:
+                this.currentScene = new MenuScene();
+                break;
         }
     }
 
-    public Scene getCurrentScene() {
+    public static Scene getCurrentScene() {
         return currentScene;
     }
 

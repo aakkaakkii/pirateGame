@@ -30,4 +30,16 @@ public class AABB {
     public void setMax(Vector2 max) {
         this.max = max;
     }
+
+    public boolean overlap(AABB b) {
+        return AABB.overlap(this, b);
+    }
+    public static boolean overlap(AABB b1, AABB b2) {
+        if (b1.getMax().x <= b2.getMin().x || b2.getMax().x <= b1.getMin().x ||
+                b1.getMax().y <= b2.getMin().y || b2.getMax().y <= b1.getMin().y) {
+            return false;
+        }
+
+        return true;
+    }
 }
