@@ -14,6 +14,10 @@ public class SpriteRenderer extends Drawer {
         this.sprite = sprite;
     }
 
+    public Sprite getSprite() {
+        return sprite;
+    }
+
     @Override
     public void draw(Graphics2D g2) {
         if(sprite != null) {

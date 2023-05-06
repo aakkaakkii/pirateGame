@@ -36,7 +36,7 @@ public class StateMachine extends Component {
 
     public HashMap<StateTrigger, String> stateTransfers = new HashMap<>();
     private List<AnimationState> states = new ArrayList<>();
-    private transient AnimationState currentState = null;
+    private AnimationState currentState = null;
     private String defaultStateTitle = "";
 
     public void setDefaultState(String animationTitle) {

@@ -2,10 +2,11 @@ package org.example.utils;
 
 import org.example.components.*;
 import org.example.components.draw.SpriteRenderer;
-import org.example.engine.AnimationState;
-import org.example.engine.AssetPool;
-import org.example.engine.GameObject;
-import org.example.engine.Transform;
+import org.example.engine.*;
+import org.example.engine.ui.Button;
+import org.example.engine.ui.ButtonClickCallback;
+import org.example.engine.ui.Panel;
+import org.example.engine.ui.ToggleButton;
 import org.example.physics.common.Vector2;
 
 public class Prefabs {
@@ -101,5 +102,61 @@ public class Prefabs {
         player.addComponent(new PlayerController());
 
         return player;
+    }
+
+    public static Panel generatePauseMenu(ButtonClickCallback onResume, ButtonClickCallback onReset) {
+        Sprite panelSprite = AssetPool.getSprite("assets/pause_menu.png");
+        Panel pauseMenu = new Panel(new Vector2(Window.GAME_WIDTH/2, Window.GAME_HEIGHT/2 - 40), panelSprite.width, panelSprite.height, 10, Panel.Direction.ROW);
+        pauseMenu.addSprite(panelSprite);
+
+        Spritesheet buttons = AssetPool.getSpritesheet("assets/urm_buttons.png");
+        Spritesheet soundButton = AssetPool.getSpritesheet("assets/sound_button.png");
+
+        float leftPoint  = Window.GAME_WIDTH/2 -75;
+        float mousePadding = 75;
+
+        Button resume = new Button(new Vector2(leftPoint, Window.GAME_HEIGHT/2 + 90), 56, 56, 13);
+        resume.addDefaultState(buttons.sprites.get(6));
+        resume.addHoverState(buttons.sprites.get(7));
+        resume.addClickedState(buttons.sprites.get(8));
+        resume.setCallback(()->Window.getWindow().changeScene(2));
+
+        Button reset = new Button(new Vector2(leftPoint + mousePadding, Window.GAME_HEIGHT/2 + 90), 56, 56, 13);
+        reset.addDefaultState(buttons.sprites.get(3));
+        reset.addHoverState(buttons.sprites.get(4));
+        reset.addClickedState(buttons.sprites.get(5));
+        reset.setCallback(onReset);
+
+        Button home = new Button(new Vector2(leftPoint + 2 * mousePadding, Window.GAME_HEIGHT/2 + 90), 56, 56, 13);
+        home.addDefaultState(buttons.sprites.get(0));
+        home.addHoverState(buttons.sprites.get(1));
+        home.addClickedState(buttons.sprites.get(2));
+        home.setCallback(onResume);
+
+
+        ToggleButton music = new ToggleButton(new Vector2(Window.GAME_WIDTH/2 + 60, Window.GAME_HEIGHT/2 - 55), 42, 42, 13);
+        music.addOnDefaultState(soundButton.sprites.get(0));
+        music.addOnHoverState(soundButton.sprites.get(1));
+        music.addOnClickedState(soundButton.sprites.get(2));
+        music.addOffDefaultState(soundButton.sprites.get(3));
+        music.addOffClickedState(soundButton.sprites.get(5));
+        music.addOffHoverState(soundButton.sprites.get(4));
+
+        ToggleButton sfx = new ToggleButton(new Vector2(Window.GAME_WIDTH/2 + 60, Window.GAME_HEIGHT/2 - 100), 42, 42, 13);
+        sfx.addOnDefaultState(soundButton.sprites.get(0));
+        sfx.addOnHoverState(soundButton.sprites.get(1));
+        sfx.addOnClickedState(soundButton.sprites.get(2));
+        sfx.addOffDefaultState(soundButton.sprites.get(3));
+        sfx.addOffClickedState(soundButton.sprites.get(5));
+        sfx.addOffHoverState(soundButton.sprites.get(4));
+
+        pauseMenu.addElement(sfx);
+        pauseMenu.addElement(music);
+        pauseMenu.addElement(home);
+        pauseMenu.addElement(resume);
+        pauseMenu.addElement(reset);
+
+
+        return pauseMenu;
     }
 }

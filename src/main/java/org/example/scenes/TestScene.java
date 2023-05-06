@@ -1,21 +1,20 @@
 package org.example.scenes;
 
 import org.example.components.Spritesheet;
-import org.example.components.draw.LineDrawer;
-import org.example.components.draw.RectangleRenderer;
 import org.example.engine.AssetPool;
 import org.example.engine.GameObject;
 import org.example.engine.Scene;
 import org.example.engine.Window;
+import org.example.engine.ui.Panel;
 import org.example.physics.RigidBody;
 import org.example.physics.World;
 import org.example.physics.common.Vector2;
 import org.example.physics.primitives.Box2D;
-import org.example.physics.primitives.RaycastResult;
 import org.example.tmp.LevelLoader;
 import org.example.utils.Prefabs;
 
 import java.awt.*;
+
 
 public class TestScene extends Scene {
     private float xDelta = 0;
@@ -24,6 +23,8 @@ public class TestScene extends Scene {
     private int aniTick = 0, aniIndex = 0;
     private float scaleH = 4f;
     private float scaleW = 4f;
+    private boolean isPaused = false;
+    private Panel pauseMenu;
 
     private int[][] levelData;
 
@@ -33,6 +34,10 @@ public class TestScene extends Scene {
 
     @Override
     public void init() {
+
+        AssetPool.addSpritesheet("assets/urm_buttons.png", 56, 56, 0, 3, 3 * 3);
+        AssetPool.addSpritesheet("assets/sound_button.png", 42, 42, 0, 3, 2 * 3);
+
 
 //        gameObject.addComponent(new ColorComp());
 //
@@ -57,8 +62,15 @@ public class TestScene extends Scene {
 //        gameObject.addComponent(r);
 
 
+        pauseMenu = Prefabs.generatePauseMenu(
+                () -> isPaused = false,
+                () -> Window.getWindow().changeScene(0)
+        );
+
+
 
         addGameObject(gameObject);
+        pauseMenu.addToScene(this);
         world = new World();
 
         LevelLoader.loadLevel(this, world);
@@ -68,6 +80,10 @@ public class TestScene extends Scene {
 
     @Override
     public void update(float dt) {
+/*        if (Window.getWindow().keyListener.isKeyPressed(KeyEvent.VK_SPACE)) {
+
+        }*/
+
 /*        if (Window.getWindow().keyListener.isKeyPressed(KeyEvent.VK_SPACE)) {
             gameObject.getComponent(StateMachine.class).trigger("attack");
         }else if (Window.getWindow().keyListener.isKeyPressed(KeyEvent.VK_D)) {
@@ -85,6 +101,11 @@ public class TestScene extends Scene {
 
 //        System.out.println(gameObject.transform.position);
 
+
+        if(isPaused) {
+            return;
+        }
+
         world.update(dt);
 
         for (GameObject g : gameObjects) {
@@ -101,28 +122,14 @@ public class TestScene extends Scene {
 
         float yVal = 26;
 
-        Vector2 raycastBegin = new Vector2(gameObject.transform.position);
-        raycastBegin.sub(innerPlayerWidth / 2.0f, 0.0f);
-        Vector2 raycastEnd = new Vector2(raycastBegin).add(0.0f, yVal);
 
-        Vector2 p1 = new Vector2(100, 300);
-        Vector2 p2 = new Vector2(110, 500);
 
 //        RaycastResult info = org.example.engine.Window.getCurrentScene().world.raycast(raycastBegin, raycastEnd);
 //        RaycastResult info = org.example.engine.Window.getCurrentScene().world.raycast(p1, p2);
 
 //        System.out.println(info.isHit() );
 
-        g2.setColor(Color.MAGENTA);
-        g2.drawLine((int)raycastBegin.x, (int)raycastBegin.y, (int)raycastEnd.x, (int)raycastEnd.y);
-        g2.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
 
-        Vector2 raycast2Begin = new Vector2(raycastBegin).add(innerPlayerWidth, 0.0f);
-        Vector2 raycast2End = new Vector2(raycastEnd).add(innerPlayerWidth, 0.0f);
-//
-//
-        g2.setColor(Color.MAGENTA);
-        g2.drawLine((int)raycast2Begin.x, (int)raycast2Begin.y, (int)raycast2End.x, (int)raycast2End.y);
 
 
 

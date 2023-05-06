@@ -44,11 +44,14 @@ public class Window extends JFrame implements Runnable {
     }
 
     public void init() {
-        changeScene(2);
-        currentScene.init();
+        changeScene(0);
     }
 
     public void changeScene(int scene) {
+        if (currentScene != null) {
+//            currentScene.destroy();
+        }
+
         switch (scene) {
             case 0:
                 this.currentScene = new TestScene();
@@ -60,6 +63,9 @@ public class Window extends JFrame implements Runnable {
                 this.currentScene = new MenuScene();
                 break;
         }
+
+        currentScene.init();
+
     }
 
     public static Scene getCurrentScene() {
